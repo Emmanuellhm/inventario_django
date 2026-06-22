@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="container py-5">
+  <h2 class="text-xl font-semibold mb-4">Lista de Clientes</h2>
+  <a href="{% url 'customadmin:cliente_add' %}" class="btn-amber mb-3 inline-block px-4 py-2 rounded-3xl">Agregar Cliente</a>
+  <table class="table table-striped">
+    <thead class="thead-dark">
+      <tr>
+        <th>Nombre</th>
+        <th>Apellido</th>
+        <th>Correo</th>
+        <th>Teléfono</th>
+        <th>Ciudad</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for cliente in clientes %}
+      <tr>
+        <td>{{ cliente.nombre }}</td>
+        <td>{{ cliente.apellido }}</td>
+        <td>{{ cliente.correo }}</td>
+        <td>{{ cliente.telefono }}</td>
+        <td>{{ cliente.ciudad }}</td>
+        <td>
+          <a href="{% url 'customadmin:cliente_edit' cliente.pk %}" class="btn btn-sm btn-primary mr-2">Editar</a>
+          <a href="{% url 'customadmin:cliente_delete' cliente.pk %}" class="btn btn-sm btn-danger">Borrar</a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="6" class="text-center">No hay clientes registrados.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

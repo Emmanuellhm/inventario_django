@@ -1,0 +1,60 @@
+{% load static %}
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Inventario LF - CRM</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-6YjereT7EON+Y3f3YhRKt1G1pIUcHkWql2v3V0yXLxqZnn0nnjS0Jq1mLWjlIvMTw7lpJkS3eZ7yJyGqz8rFLw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+      body {
+        font-family: 'Inter', sans-serif;
+        background: #f8f1e2;
+        color: #1f2937;
+      }
+      .hero-gradient {
+        background: linear-gradient(135deg, #c2410c 0%, #f59e0b 45%, #fb923c 100%);
+      }
+      .hero-card {
+        border-radius: 1.8rem;
+        background: rgba(255,255,255,0.14);
+        border: 1px solid rgba(255,255,255,0.18);
+        box-shadow: 0 30px 60px rgba(15, 23, 42, 0.12);
+        backdrop-filter: blur(12px);
+      }
+      .btn-amber {
+        background: #f59e0b;
+        color: #1f2937;
+      }
+      .btn-amber:hover,
+      .btn-amber:focus {
+        background: #ea580c;
+        color: #fff;
+      }
+      .text-amber-dark {
+        color: #92400e;
+      }
+      .rounded-3xl {
+        border-radius: 1.75rem;
+      }
+      .card-shadow {
+        box-shadow: 0 25px 70px rgba(15, 23, 42, 0.12);
+      }
+      .glass-card {
+        background: rgba(255,255,255,0.9);
+        border: 1px solid rgba(255,255,255,0.7);
+        backdrop-filter: blur(10px);
+      }
+    </style>
+  </head>
+  <body>
+    {% include 'navbar.html' %}
+    <div class="container py-5">
+        {% block content %}
+        {% endblock %}
+    </div>
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+  </body>
+</html>

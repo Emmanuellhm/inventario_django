@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Ficha del Cliente - {{ cliente.nombre }} {{ cliente.apellido }}</title>
+    <!-- Include Bootstrap CSS for beautiful PDF compilation -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        @page {
+            size: A4;
+            margin: 20mm;
+        }
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background-color: #ffffff;
+            color: #2b2b2b;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        .header-box {
+            background-color: #1e1b4b; /* Indigo muy oscuro */
+            color: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+        .logo-mark {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: #ffffff;
+            padding: 10px 15px;
+            border-radius: 6px;
+            font-weight: 800;
+            font-size: 20px;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+        .section-title {
+            border-bottom: 2px solid #8b5cf6;
+            color: #1e1b4b;
+            padding-bottom: 8px;
+            margin-bottom: 20px;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 16px;
+            letter-spacing: 0.05em;
+        }
+        .info-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .info-label {
+            font-weight: 700;
+            color: #475569;
+            width: 30%;
+            text-transform: uppercase;
+            font-size: 11px;
+            letter-spacing: 0.05em;
+        }
+        .info-value {
+            color: #0f172a;
+            font-size: 14px;
+        }
+        .footer-note {
+            margin-top: 50px;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 15px;
+            font-size: 11px;
+            color: #64748b;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Encabezado Estilo Bootstrap Premium -->
+    <div class="header-box shadow-sm">
+        <div class="row align-items-center">
+            <div class="col-8">
+                <div class="logo-mark">LF</div>
+                <h1 class="h3 font-weight-bold mb-1">LF Carpinter CRM</h1>
+                <p class="mb-0 text-white-50">Ficha Técnica Oficial del Cliente</p>
+            </div>
+            <div class="col-4 text-end">
+                <p class="mb-0 small text-white-50">ID REGISTRO</p>
+                <h2 class="h4 font-weight-bold mb-0">#{{ cliente.id }}</h2>
+                <p class="mb-0 small text-white-50 mt-2">FECHA DE REGISTRO</p>
+                <p class="mb-0 font-weight-bold small">{{ cliente.fecha_registro|date:"d/m/Y h:i a" }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cuerpo de Detalles -->
+    <div class="container-fluid px-0">
+        <div class="row">
+            <div class="col-12">
+                <h2 class="section-title">Información del Cliente</h2>
+                
+                <table class="table info-table table-borderless">
+                    <tbody>
+                        <tr>
+                            <td class="info-label">Nombre</td>
+                            <td class="info-value"><strong>{{ cliente.nombre }}</strong></td>
+                        </tr>
+                        <tr>
+                            <td class="info-label">Apellido</td>
+                            <td class="info-value"><strong>{{ cliente.apellido }}</strong></td>
+                        </tr>
+                        <tr>
+                            <td class="info-label">Correo Electrónico</td>
+                            <td class="info-value">{{ cliente.correo }}</td>
+                        </tr>
+                        <tr>
+                            <td class="info-label">Teléfono Móvil</td>
+                            <td class="info-value">{{ cliente.telefono }}</td>
+                        </tr>
+                        <tr>
+                            <td class="info-label">Dirección de Residencia</td>
+                            <td class="info-value">{{ cliente.direccion }}</td>
+                        </tr>
+                        <tr>
+                            <td class="info-label">Ciudad</td>
+                            <td class="info-value">{{ cliente.ciudad }}</td>
+                        </tr>
+                        <tr>
+                            <td class="info-label">Estado / Región</td>
+                            <td class="info-value">{{ cliente.estado }}</td>
+                        </tr>
+                        <tr>
+                            <td class="info-label">Código Postal</td>
+                            <td class="info-value font-monospace">{{ cliente.codigo_postal }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pie de página del PDF -->
+    <div class="footer-note">
+        Este documento es un extracto oficial generado automáticamente por el sistema LF Carpinter CRM.<br>
+        © {{ current_year|default:"2026" }} LF Carpinter. Todos los derechos reservados.
+    </div>
+
+</body>
+</html>

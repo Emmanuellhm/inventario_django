@@ -1,0 +1,186 @@
+{% load static %}
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Panel de Administración — LF Carpinter CRM</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #0b0f19 0%, #111827 40%, #1e1b4b 100%);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            color: #f3f4f6;
+            position: relative;
+            overflow-x: hidden;
+        }
+        body::before {
+            content: '';
+            position: absolute;
+            top: -10%;
+            left: -10%;
+            width: 40%;
+            height: 40%;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.12) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        body::after {
+            content: '';
+            position: absolute;
+            bottom: -10%;
+            right: -10%;
+            width: 40%;
+            height: 40%;
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+    </style>
+</head>
+<body class="pb-12">
+
+    <!-- Navbar -->
+    <nav class="glass-card sticky top-0 z-50 border-b border-white/5 bg-slate-950/70">
+        <div class="container mx-auto px-6 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center font-extrabold text-white text-base shadow-lg shadow-indigo-500/30">LF</div>
+                <span class="text-white font-bold text-lg tracking-wide">LF Carpinter <span class="text-xs uppercase tracking-widest text-indigo-400 font-semibold ml-1">CRM</span></span>
+            </div>
+            <div class="flex items-center gap-6">
+                <span class="text-slate-300 text-sm hidden sm:inline">Hola, <strong class="text-white">{{ user.get_full_name|default:user.username }}</strong></span>
+                <a href="{% url 'logout' %}" class="bg-gradient-to-r from-red-500 to-rose-600 text-white px-4 py-2 rounded-lg font-semibold hover:opacity-90 transition text-sm flex items-center gap-2 shadow-md shadow-red-500/20">
+                    <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-6 mt-8 relative z-10">
+
+        <!-- Messages -->
+        {% if messages %}
+            <div class="max-w-4xl mx-auto mb-6">
+                {% for message in messages %}
+                    <div class="p-4 rounded-xl flex items-center gap-3 border {% if message.tags == 'error' %}bg-red-950/30 border-red-500/30 text-red-200{% else %}bg-emerald-950/30 border-emerald-500/30 text-emerald-200{% endif %}">
+                        <i class="fas {% if message.tags == 'error' %}fa-exclamation-circle{% else %}fa-check-circle{% endif %}"></i>
+                        <span class="text-sm font-medium">{{ message }}</span>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <!-- Estadísticas -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 max-w-6xl mx-auto">
+            <!-- Stat 1 -->
+            <div class="glass-card rounded-2xl p-6 flex items-center gap-5">
+                <div class="h-14 w-14 rounded-2xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center text-2xl shadow-inner border border-indigo-500/20">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div>
+                    <h3 class="text-slate-400 text-xs uppercase font-bold tracking-widest">Total Clientes</h3>
+                    <p class="text-3xl font-extrabold text-white mt-1">{{ total_clientes }}</p>
+                </div>
+            </div>
+            <!-- Stat 2 -->
+            <div class="glass-card rounded-2xl p-6 flex items-center gap-5">
+                <div class="h-14 w-14 rounded-2xl bg-purple-500/10 text-purple-400 flex items-center justify-center text-2xl shadow-inner border border-purple-500/20">
+                    <i class="fas fa-city"></i>
+                </div>
+                <div>
+                    <h3 class="text-slate-400 text-xs uppercase font-bold tracking-widest">Ciudades Atendidas</h3>
+                    <p class="text-3xl font-extrabold text-white mt-1">{{ ciudades_unicas }}</p>
+                </div>
+            </div>
+            <!-- Stat 3 -->
+            <div class="glass-card rounded-2xl p-6 flex items-center gap-5">
+                <div class="h-14 w-14 rounded-2xl bg-pink-500/10 text-pink-400 flex items-center justify-center text-2xl shadow-inner border border-pink-500/20">
+                    <i class="fas fa-map-marked-alt"></i>
+                </div>
+                <div>
+                    <h3 class="text-slate-400 text-xs uppercase font-bold tracking-widest">Estados Cubiertos</h3>
+                    <p class="text-3xl font-extrabold text-white mt-1">{{ estados_unicos }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabla de Registros -->
+        <div class="glass-card rounded-3xl shadow-2xl max-w-6xl mx-auto overflow-hidden border border-white/5 bg-slate-900/30">
+            <div class="px-8 py-6 border-b border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4 bg-slate-950/20">
+                <div>
+                    <h2 class="text-xl font-bold text-white tracking-wide">Registros en Base de Datos</h2>
+                    <p class="text-slate-400 text-xs mt-1">Lista de clientes activos y sus fichas técnicas</p>
+                </div>
+                <a href="{% url 'add_record' %}" class="bg-gradient-to-r from-indigo-500 to-purple-600 text-white px-5 py-3 rounded-xl font-semibold hover:opacity-90 transition text-sm flex items-center gap-2 shadow-lg shadow-indigo-500/25 self-stretch sm:self-auto justify-center">
+                    <i class="fas fa-plus"></i> Agregar Cliente
+                </a>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="border-b border-white/5 text-slate-400 text-xs uppercase font-bold tracking-wider bg-slate-950/10">
+                            <th class="px-6 py-4">ID</th>
+                            <th class="px-6 py-4">Nombre Completo</th>
+                            <th class="px-6 py-4">Correo</th>
+                            <th class="px-6 py-4">Teléfono</th>
+                            <th class="px-6 py-4">Ubicación</th>
+                            <th class="px-6 py-4 text-center">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-white/5">
+                        {% for cliente in clientes %}
+                            <tr class="hover:bg-white/[0.02] transition">
+                                <td class="px-6 py-4 text-slate-400 text-sm font-semibold">#{{ cliente.id }}</td>
+                                <td class="px-6 py-4">
+                                    <div class="font-semibold text-white">{{ cliente.nombre }} {{ cliente.apellido }}</div>
+                                    <div class="text-xs text-slate-400 mt-0.5"><i class="far fa-calendar-alt mr-1"></i> {{ cliente.fecha_registro|date:"d M Y" }}</div>
+                                </td>
+                                <td class="px-6 py-4 text-slate-300 text-sm">{{ cliente.correo }}</td>
+                                <td class="px-6 py-4 text-slate-300 text-sm font-medium">{{ cliente.telefono }}</td>
+                                <td class="px-6 py-4">
+                                    <div class="text-slate-200 text-sm font-medium">{{ cliente.ciudad }}</div>
+                                    <div class="text-xs text-slate-400">{{ cliente.estado }}</div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center justify-center gap-2">
+                                        <!-- Detalles -->
+                                        <a href="{% url 'view_record' cliente.id %}" class="h-9 w-9 rounded-lg bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 hover:bg-indigo-500 hover:text-white transition flex items-center justify-center" title="Ver Ficha Completamente">
+                                            <i class="fas fa-eye text-sm"></i>
+                                        </a>
+                                        <!-- Editar -->
+                                        <a href="{% url 'edit_record' cliente.id %}" class="h-9 w-9 rounded-lg bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 hover:bg-yellow-500 hover:text-slate-900 transition flex items-center justify-center" title="Editar Registro">
+                                            <i class="fas fa-pencil-alt text-sm"></i>
+                                        </a>
+                                        <!-- Eliminar -->
+                                        <a href="{% url 'delete_record' cliente.id %}" class="h-9 w-9 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 hover:bg-red-500 hover:text-white transition flex items-center justify-center" onclick="return confirm('¿Seguro de que deseas eliminar permanentemente a este cliente?');" title="Eliminar Registro">
+                                            <i class="fas fa-trash-alt text-sm"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="6" class="px-6 py-12 text-center text-slate-400">
+                                    <div class="text-4xl mb-4 text-slate-500"><i class="fas fa-folder-open"></i></div>
+                                    <p class="text-sm">No hay clientes registrados en la base de datos.</p>
+                                    <a href="{% url 'add_record' %}" class="inline-block mt-4 text-indigo-400 font-semibold hover:text-indigo-300 transition text-sm">Registra tu primer cliente ahora</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>

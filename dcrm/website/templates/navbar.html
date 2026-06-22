@@ -1,0 +1,23 @@
+<header class="bg-white shadow-sm sticky top-0 z-50">
+  <div class="container mx-auto px-6 py-4 flex items-center justify-between">
+    <div class="flex items-center gap-4">
+      <div class="h-12 w-12 rounded-2xl bg-amber-500 text-white flex items-center justify-center font-bold">LF</div>
+      <div>
+        <p class="text-xs uppercase tracking-[0.3em] text-amber-600 font-semibold">LF Carpinter</p>
+      </div>
+    </div>
+    <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-stone-700">
+      <a href="/" class="hover:text-amber-600 transition">Página de inicio</a>
+      <a href="{% url 'contacto' %}" class="hover:text-amber-600 transition">Contáctanos</a>
+    </nav>
+    <div class="hidden md:flex items-center gap-3">
+      {% if user.is_authenticated %}
+        <span class="text-stone-700">{{ greeting|default:"Hola" }}, {{ user.get_full_name|default:user.username }}.</span>
+        <a href="{% url 'logout' %}" class="rounded-full border border-stone-300 px-5 py-2 text-sm text-stone-700 hover:bg-stone-100 transition">Cerrar sesión</a>
+      {% else %}
+        <a href="{% url 'login' %}" class="rounded-full border border-stone-300 px-5 py-2 text-sm text-stone-700 hover:bg-stone-100 transition">Iniciar sesión</a>
+        <a href="{% url 'register' %}" class="rounded-full bg-amber-600 px-5 py-2 text-sm font-semibold text-white hover:bg-amber-700 transition">Registrar</a>
+      {% endif %}
+    </div>
+  </div>
+</header>
