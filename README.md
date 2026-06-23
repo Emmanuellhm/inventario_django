@@ -414,6 +414,6 @@ python manage.py runserver
 
 # Autor
 
-**LF Carpinter CRM**
+**Emmagamer**
 
 Sistema de Gestión de Clientes desarrollado con Django, HTMX y SQLite como proyecto académico y empresarial enfocado en seguridad, arquitectura multicapa y gestión eficiente de clientes.
