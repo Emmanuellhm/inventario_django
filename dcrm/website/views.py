@@ -323,22 +323,7 @@ def register_user(request):
 
 
 
-@login_required(login_url='home')
-@role_required('Usuario', 'admin')
-def edit_record(request, pk):
-    """Actualiza la información de un cliente existente."""
-    cliente = get_object_or_404(Cliente, pk=pk)
-    if request.method == 'POST':
-        form = ClienteForm(request.POST, instance=cliente)
-        if form.is_valid():
-            form.save()
-            messages.success(request, '¡Cliente actualizado exitosamente!')
-            return redirect('dashboard')
-        else:
-            messages.error(request, 'Hubo un error al actualizar los datos. Revisa el formulario.')
-    else:
-        form = ClienteForm(instance=cliente)
-    return render(request, 'edit_record.html', {'form': form, 'cliente': cliente})
+# Duplicate edit_record removed – HTMX-enabled version defined earlier
 
 
 @login_required(login_url='home')
