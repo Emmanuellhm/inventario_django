@@ -1,0 +1,43 @@
+{% extends 'customadmin_base.html' %}
+{% load static %}
+
+{% block title %}Contacto de Soporte — LF Carpinter ADMIN{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto">
+    <!-- Header -->
+    <div class="mb-8">
+        <h1 class="text-3xl font-extrabold text-white tracking-wide">Contáctanos / Soporte</h1>
+        <p class="text-slate-400 text-sm mt-1">Canales oficiales de asistencia técnica para administradores</p>
+    </div>
+
+    <!-- Tarjeta de Contacto -->
+    <div class="glass-card rounded-3xl p-8 border border-white/5 bg-slate-900/30 shadow-2xl relative overflow-hidden">
+        <div class="absolute -top-10 -left-10 h-32 w-32 rounded-full bg-indigo-500/10 blur-xl"></div>
+        
+        <div class="relative z-10 space-y-6">
+            <p class="text-slate-300 text-sm leading-relaxed">
+                Si experimentas problemas técnicos con la plataforma, la base de datos o el sistema de roles, puedes ponerte en contacto directo con el equipo de desarrollo de **LF Carpinter**:
+            </p>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div class="p-5 rounded-2xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] transition">
+                    <div class="text-amber-500 text-2xl mb-3"><i class="fas fa-envelope"></i></div>
+                    <span class="text-xs uppercase font-bold text-slate-400 tracking-wider">Correo de Soporte</span>
+                    <a href="mailto:soporte@lfcarpinter.com" class="block font-semibold text-white mt-1 hover:underline">soporte@lfcarpinter.com</a>
+                </div>
+                <div class="p-5 rounded-2xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] transition">
+                    <div class="text-purple-500 text-2xl mb-3"><i class="fas fa-phone-alt"></i></div>
+                    <span class="text-xs uppercase font-bold text-slate-400 tracking-wider">Teléfono de Soporte</span>
+                    <span class="block font-semibold text-white mt-1">+1 (555) 019-2834</span>
+                </div>
+            </div>
+            
+            <div class="p-4 rounded-2xl bg-amber-500/5 border border-amber-500/10 text-xs text-amber-300/90 leading-relaxed">
+                <span class="font-bold block mb-1">Horario de Atención Administrativa</span>
+                Lunes a Viernes de 8:00 AM a 6:00 PM. Las solicitudes fuera de horario serán procesadas al siguiente día hábil.
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

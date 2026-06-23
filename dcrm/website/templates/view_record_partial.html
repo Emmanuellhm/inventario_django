@@ -17,6 +17,11 @@
             <div class="text-xs text-slate-400 mt-2"><i class="far fa-calendar-alt mr-1.5"></i> Creado el {{ cliente.fecha_registro|date:"d M Y, h:i a" }}</div>
         </div>
         <div class="w-full flex flex-col gap-3 mt-4">
+            <a href="{% url 'download_pdf' cliente.id %}" class="w-full bg-gradient-to-r from-indigo-500 to-purple-600 text-white py-3 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 hover:opacity-90 transition shadow-md shadow-indigo-500/10">
+                <i class="fas fa-file-pdf"></i> Descargar Ficha PDF
+            </a>
+            
+            {% if is_admin %}
             <div class="grid grid-cols-2 gap-3">
                 <a href="{% url 'edit_record' cliente.id %}" class="bg-white/5 hover:bg-white/10 text-slate-200 hover:text-white py-3 rounded-xl font-semibold text-sm border border-white/5 flex items-center justify-center gap-2 transition">
                     <i class="fas fa-pencil-alt text-yellow-400"></i> Editar
@@ -25,6 +30,7 @@
                     <i class="fas fa-trash-alt text-red-500"></i> Eliminar
                 </a>
             </div>
+            {% endif %}
         </div>
     </div>
     <!-- Columna de Detalles -->

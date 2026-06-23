@@ -1,37 +1,89 @@
-{% extends 'base.html' %}
+{% extends 'customadmin_base.html' %}
 {% load static %}
+
+{% block title %}Gestionar Clientes — LF Carpinter ADMIN{% endblock %}
+
 {% block content %}
-<div class="container py-5">
-  <h2 class="text-xl font-semibold mb-4">Lista de Clientes</h2>
-  <a href="{% url 'customadmin:cliente_add' %}" class="btn-amber mb-3 inline-block px-4 py-2 rounded-3xl">Agregar Cliente</a>
-  <table class="table table-striped">
-    <thead class="thead-dark">
-      <tr>
-        <th>Nombre</th>
-        <th>Apellido</th>
-        <th>Correo</th>
-        <th>Teléfono</th>
-        <th>Ciudad</th>
-        <th>Acciones</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for cliente in clientes %}
-      <tr>
-        <td>{{ cliente.nombre }}</td>
-        <td>{{ cliente.apellido }}</td>
-        <td>{{ cliente.correo }}</td>
-        <td>{{ cliente.telefono }}</td>
-        <td>{{ cliente.ciudad }}</td>
-        <td>
-          <a href="{% url 'customadmin:cliente_edit' cliente.pk %}" class="btn btn-sm btn-primary mr-2">Editar</a>
-          <a href="{% url 'customadmin:cliente_delete' cliente.pk %}" class="btn btn-sm btn-danger">Borrar</a>
-        </td>
-      </tr>
-      {% empty %}
-      <tr><td colspan="6" class="text-center">No hay clientes registrados.</td></tr>
-      {% endfor %}
-    </tbody>
-  </table>
+<div class="max-w-6xl mx-auto">
+    <!-- Header -->
+    <div class="mb-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div>
+            <h1 class="text-3xl font-extrabold text-white tracking-wide">Gestión de Clientes</h1>
+            <p class="text-slate-400 text-sm mt-1">Registros de clientes activos y sus configuraciones detalladas</p>
+        </div>
+        <a hx-get="{% url 'customadmin:cliente_add' %}" hx-target="#spa-container" hx-select="#spa-container" hx-push-url="true" class="bg-gradient-to-r from-amber-500 to-orange-600 text-white px-5 py-3 rounded-xl font-semibold hover:opacity-90 transition text-sm flex items-center gap-2 shadow-lg shadow-amber-500/25 self-stretch sm:self-auto justify-center cursor-pointer">
+            <i class="fas fa-plus"></i> Agregar Cliente
+        </a>
+    </div>
+
+    <!-- Tabla de Registros -->
+    <div class="glass-card rounded-3xl shadow-2xl overflow-hidden border border-white/5 bg-slate-900/30">
+        <div class="px-8 py-6 border-b border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4 bg-slate-950/20">
+            <div>
+                <h2 class="text-xl font-bold text-white tracking-wide">Base de Datos de Clientes</h2>
+                <p class="text-slate-400 text-xs mt-1">Lista completa de registros en el sistema</p>
+            </div>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="border-b border-white/5 text-slate-400 text-xs uppercase font-bold tracking-wider bg-slate-950/10">
+                        <th class="px-6 py-4">ID</th>
+                        <th class="px-6 py-4">Nombre Completo</th>
+                        <th class="px-6 py-4">Correo</th>
+                        <th class="px-6 py-4">Teléfono</th>
+                        <th class="px-6 py-4">Ubicación</th>
+                        <th class="px-6 py-4 text-center">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-white/5">
+                    {% for cliente in clientes %}
+                        <tr class="hover:bg-white/[0.02] transition">
+                            <td class="px-6 py-4 text-slate-400 text-sm font-semibold">#{{ cliente.id }}</td>
+                            <td class="px-6 py-4">
+                                <div class="font-semibold text-white">{{ cliente.nombre }} {{ cliente.apellido }}</div>
+                                <div class="text-xs text-slate-400 mt-0.5"><i class="far fa-calendar-alt mr-1"></i> {{ cliente.fecha_registro|date:"d M Y" }}</div>
+                            </td>
+                            <td class="px-6 py-4 text-slate-300 text-sm">{{ cliente.correo }}</td>
+                            <td class="px-6 py-4 text-slate-300 text-sm font-medium">{{ cliente.telefono }}</td>
+                            <td class="px-6 py-4">
+                                <div class="text-slate-200 text-sm font-medium">{{ cliente.ciudad }}</div>
+                                <div class="text-xs text-slate-400">{{ cliente.estado }}</div>
+                            </td>
+                            <td class="px-6 py-4">
+                                <div class="flex items-center justify-center gap-2">
+                                    <!-- Ver Ficha -->
+                                    <a hx-get="{% url 'customadmin:cliente_detail' cliente.id %}" hx-target="#spa-container" hx-select="#spa-container" hx-push-url="true" class="h-9 w-9 rounded-lg bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 hover:bg-indigo-500 hover:text-white transition flex items-center justify-center cursor-pointer" title="Ver Ficha Completa">
+                                        <i class="fas fa-eye text-sm"></i>
+                                    </a>
+                                    <!-- Descargar PDF -->
+                                    <a href="{% url 'customadmin:download_pdf' cliente.id %}" class="h-9 w-9 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 hover:bg-green-500 hover:text-white transition flex items-center justify-center" title="Descargar Ficha PDF">
+                                        <i class="fas fa-file-pdf text-sm"></i>
+                                    </a>
+                                    <!-- Editar -->
+                                    <a hx-get="{% url 'customadmin:cliente_edit' cliente.id %}" hx-target="#spa-container" hx-select="#spa-container" hx-push-url="true" class="h-9 w-9 rounded-lg bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 hover:bg-yellow-500 hover:text-slate-900 transition flex items-center justify-center cursor-pointer" title="Editar Registro">
+                                        <i class="fas fa-pencil-alt text-sm"></i>
+                                    </a>
+                                    <!-- Eliminar -->
+                                    <a hx-get="{% url 'customadmin:cliente_delete' cliente.id %}" hx-target="#spa-container" hx-select="#spa-container" hx-push-url="true" class="h-9 w-9 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 hover:bg-red-500 hover:text-white transition flex items-center justify-center cursor-pointer" title="Eliminar Registro">
+                                        <i class="fas fa-trash-alt text-sm"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="6" class="px-6 py-12 text-center text-slate-400">
+                                <div class="text-4xl mb-4 text-slate-500"><i class="fas fa-folder-open"></i></div>
+                                <p class="text-sm">No hay clientes registrados en la base de datos.</p>
+                                <a href="{% url 'customadmin:cliente_add' %}" class="inline-block mt-4 text-amber-400 font-semibold hover:text-amber-300 transition text-sm">Registra tu primer cliente ahora</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 {% endblock %}

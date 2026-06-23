@@ -13,9 +13,9 @@ def role_required(*allowed_roles):
         @wraps(view_func)
         def _wrapped_view(request, *args, **kwargs):
             if not request.user.is_authenticated:
-                return redirect(f"{reverse('customadmin:login')}?next={request.path}")
+                return redirect(f"{reverse('home')}?next={request.path}")
             user_roles = set(request.user.roles.values_list('name', flat=True))
-            if user_roles.intersection(set(allowed_roles)):
+            if request.user.is_superuser or user_roles.intersection(set(allowed_roles)):
                 return view_func(request, *args, **kwargs)
             # If the user lacks the role, redirect to a generic no‑access page
             return redirect('customadmin:no_access')

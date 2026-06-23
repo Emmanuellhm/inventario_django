@@ -5,9 +5,9 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Panel de Administración — LF Carpinter CRM</title>
-    <script src="{% static \'js/tailwindcss.js\' %}"></script>
+    <script src="{% static 'js/tailwindcss.js' %}"></script>
     <!-- Google Fonts removed for strict local mode -->
-    <link href="{% static \'css/all.min.css\' %}" rel="stylesheet">
+    <link href="{% static 'css/all.min.css' %}" rel="stylesheet">
     <style>
         body {
             background: linear-gradient(135deg, #0b0f19 0%, #111827 40%, #1e1b4b 100%);
@@ -118,9 +118,11 @@
                     <h2 class="text-xl font-bold text-white tracking-wide">Registros en Base de Datos</h2>
                     <p class="text-slate-400 text-xs mt-1">Lista de clientes activos y sus fichas técnicas</p>
                 </div>
-                <a hx-get="{% url 'add_record' %}" hx-target="#spa-container" hx-select="#spa-container" hx-push-url="true" class="bg-gradient-to-r from-indigo-500 to-purple-600 text-white px-5 py-3 rounded-xl font-semibold hover:opacity-90 transition text-sm flex items-center gap-2 shadow-lg shadow-indigo-500/25 self-stretch sm:self-auto justify-center cursor-pointer">
+                {% if is_admin %}
+                <a hx-get="{% url 'add_record' %}" hx-target="#spa-container" hx-push-url="true" class="bg-gradient-to-r from-indigo-500 to-purple-600 text-white px-5 py-3 rounded-xl font-semibold hover:opacity-90 transition text-sm flex items-center gap-2 shadow-lg shadow-indigo-500/25 self-stretch sm:self-auto justify-center cursor-pointer">
                     <i class="fas fa-plus"></i> Agregar Cliente
                 </a>
+                {% endif %}
             </div>
 
             <div class="overflow-x-auto">
@@ -152,17 +154,19 @@
                                 <td class="px-6 py-4">
                                     <div class="flex items-center justify-center gap-2">
                                         <!-- Detalles -->
-                                        <a hx-get="{% url 'view_record' cliente.id %}" hx-target="#spa-container" hx-select="#spa-container" hx-push-url="true" class="h-9 w-9 rounded-lg bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 hover:bg-indigo-500 hover:text-white transition flex items-center justify-center cursor-pointer" title="Ver Ficha Completamente">
+                                        <a hx-get="{% url 'view_record' cliente.id %}" hx-target="#spa-container" hx-push-url="true" class="h-9 w-9 rounded-lg bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 hover:bg-indigo-500 hover:text-white transition flex items-center justify-center cursor-pointer" title="Ver Ficha Completamente">
                                             <i class="fas fa-eye text-sm"></i>
                                         </a>
+                                        {% if is_admin %}
                                         <!-- Editar -->
-                                        <a hx-get="{% url 'edit_record' cliente.id %}" hx-target="#spa-container" hx-select="#spa-container" hx-push-url="true" class="h-9 w-9 rounded-lg bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 hover:bg-yellow-500 hover:text-slate-900 transition flex items-center justify-center cursor-pointer" title="Editar Registro">
+                                        <a hx-get="{% url 'edit_record' cliente.id %}" hx-target="#spa-container" hx-push-url="true" class="h-9 w-9 rounded-lg bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 hover:bg-yellow-500 hover:text-slate-900 transition flex items-center justify-center cursor-pointer" title="Editar Registro">
                                             <i class="fas fa-pencil-alt text-sm"></i>
                                         </a>
                                         <!-- Eliminar -->
-                                        <a hx-get="{% url 'delete_record' cliente.id %}" hx-target="#spa-container" hx-select="#spa-container" hx-confirm="¿Seguro de que deseas eliminar permanentemente a este cliente?" class="h-9 w-9 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 hover:bg-red-500 hover:text-white transition flex items-center justify-center cursor-pointer" title="Eliminar Registro">
+                                        <a hx-get="{% url 'delete_record' cliente.id %}" hx-target="#spa-container" hx-confirm="¿Seguro de que deseas eliminar permanentemente a este cliente?" class="h-9 w-9 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 hover:bg-red-500 hover:text-white transition flex items-center justify-center cursor-pointer" title="Eliminar Registro">
                                             <i class="fas fa-trash-alt text-sm"></i>
                                         </a>
+                                        {% endif %}
                                     </div>
                                 </td>
                             </tr>
@@ -171,7 +175,9 @@
                                 <td colspan="6" class="px-6 py-12 text-center text-slate-400">
                                     <div class="text-4xl mb-4 text-slate-500"><i class="fas fa-folder-open"></i></div>
                                     <p class="text-sm">No hay clientes registrados en la base de datos.</p>
-                                    <a hx-get="{% url 'add_record' %}" hx-target="#spa-container" hx-select="#spa-container" hx-push-url="true" class="inline-block mt-4 text-indigo-400 font-semibold hover:text-indigo-300 transition text-sm cursor-pointer">Registra tu primer cliente ahora</a>
+                                    {% if is_admin %}
+                                    <a hx-get="{% url 'add_record' %}" hx-target="#spa-container" hx-push-url="true" class="inline-block mt-4 text-indigo-400 font-semibold hover:text-indigo-300 transition text-sm cursor-pointer">Registra tu primer cliente ahora</a>
+                                    {% endif %}
                                 </td>
                             </tr>
                         {% endfor %}

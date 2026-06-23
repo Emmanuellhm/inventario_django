@@ -23,15 +23,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-111hp2d)gtr38xy^jzs3gu^&4#u1%fbhm+87f0br8f$+z7@%xh'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False  # Set to False for security
+DEBUG = True  # Set to False for security
 
 # Security hardening
 SECURE_HSTS_SECONDS = 31536000
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 SECURE_BROWSER_XSS_FILTER = True
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = False  # Solo True en producción (HTTPS)
+CSRF_COOKIE_SECURE = False    # Solo True en producción (HTTPS)
 
 
 ALLOWED_HOSTS = []
@@ -61,7 +61,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'roles.middleware.RoleRequiredMiddleware',  # New role middleware
     'csp.middleware.CSPMiddleware',           # CSP protection (django-csp)
-    'ratelimit.middleware.RatelimitMiddleware', # Rate limiting (django-ratelimit)
+    # 'ratelimit.middleware.RatelimitMiddleware', # Rate limiting (django-ratelimit) - disabled for development
 ]
 
 ROOT_URLCONF = 'inventario.urls'
@@ -119,7 +119,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Additional regex for usernames and passwords (no special characters except _ and -)
 USERNAME_REGEX = RegexValidator(r'^[\w-]{3,30}$', 'Enter a valid username (letters, numbers, _ and -).')
-PASSWORD_REGEX = RegexValidator(r'^[A-Za-z0-9@#$%^&+=]{8,}$', 'Password may contain letters, numbers and @#$%^&+= only.')
+PASSWORD_REGEX = RegexValidator(r'^[A-Za-z0-9@#$%^&*+=]{8,}$', 'Password may contain letters, numbers and @#$%^&*+= only.')
 
 
 
@@ -142,7 +142,10 @@ STATIC_URL = '/static/'
 # Local Bootstrap assets directory
 import os
 BASE_DIR = Path(__file__).resolve().parent.parent
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+    os.path.join(BASE_DIR, 'dcrm', 'website', 'templates', 'static'),
+]
 
 
 # Default primary key field type

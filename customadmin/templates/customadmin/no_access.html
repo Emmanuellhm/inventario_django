@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Acceso no permitido</title>
+    <style>
+        body {font-family: 'Arial', sans-serif; background: #f5f5f5; color: #333; display:flex; align-items:center; justify-content:center; height:100vh; margin:0;}
+        .container {background: white; padding: 2rem 3rem; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); text-align:center;}
+        h1 {color:#d9534f; margin-bottom:1rem;}
+        a {color:#0275d8; text-decoration:none; font-weight:bold;}
+        a:hover {text-decoration:underline;}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>⚠️ Acceso denegado</h1>
+        <p>No tienes los permisos necesarios para acceder a esta página.</p>
+        <p><a href="{% url 'home' %}">Iniciar sesión</a> | <a href="{% url 'dashboard' %}">Volver al dashboard</a></p>
+    </div>
+</body>
+</html>

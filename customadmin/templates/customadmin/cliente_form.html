@@ -1,13 +1,140 @@
-{% extends 'base.html' %}
+{% extends 'customadmin_base.html' %}
 {% load static %}
+
+{% block title %}{{ view.object|default:"Nuevo Cliente" }} — LF Carpinter ADMIN{% endblock %}
+
+{% block extra_head %}
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <style>
+        .form-control {
+            background-color: rgba(255, 255, 255, 0.04) !important;
+            border: 1px solid rgba(255, 255, 255, 0.08) !important;
+            color: #ffffff !important;
+            border-radius: 0.75rem !important;
+            padding: 0.75rem 1rem !important;
+            font-size: 0.95rem !important;
+            transition: all 0.2s ease-in-out !important;
+        }
+        .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.3) !important;
+        }
+        .form-control:focus {
+            background-color: rgba(255, 255, 255, 0.08) !important;
+            border-color: rgba(245, 158, 11, 0.6) !important;
+            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.15) !important;
+            outline: none !important;
+        }
+        .form-label {
+            color: rgba(255, 255, 255, 0.75) !important;
+            font-weight: 600 !important;
+            font-size: 0.8rem !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.05em !important;
+            margin-bottom: 0.5rem !important;
+        }
+    </style>
+{% endblock %}
+
 {% block content %}
-<div class="container py-5">
-  <h2 class="text-xl font-semibold mb-4">{{ view.object|default:"Nuevo Cliente" }}</h2>
-  <form method="post" class="bg-white p-4 rounded-3xl shadow-md">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn-amber mt-3">Guardar</button>
-    <a href="{% url 'customadmin:cliente_list' %}" class="btn btn-secondary mt-3 ml-2">Cancelar</a>
-  </form>
+<div class="max-w-4xl mx-auto">
+    <!-- Card Principal -->
+    <div class="glass-card w-full rounded-3xl shadow-2xl overflow-hidden grid grid-cols-1 md:grid-cols-12 border border-white/5 relative z-10">
+        
+        <!-- Columna de bienvenida / Ilustración -->
+        <div class="md:col-span-4 bg-gradient-to-br from-amber-600/90 to-orange-800/90 p-8 flex flex-col justify-between text-white relative overflow-hidden">
+            <!-- Blobs internos -->
+            <div class="absolute -top-10 -left-10 h-32 w-32 rounded-full bg-white/10 blur-xl"></div>
+            <div class="absolute -bottom-10 -right-10 h-32 w-32 rounded-full bg-black/20 blur-xl"></div>
+            
+            <div class="relative z-10">
+                <div class="h-12 w-12 rounded-xl bg-white/15 backdrop-blur-md flex items-center justify-center font-bold text-white text-lg border border-white/20 mb-6">LF</div>
+                <h2 class="text-2xl font-extrabold tracking-wide mb-3">
+                    {% if view.object %}Editar Cliente{% else %}Nuevo Cliente{% endif %}
+                </h2>
+                <p class="text-amber-100 text-xs leading-relaxed">Completa el formulario técnico con los datos completos del cliente para mantener la base de datos actualizada.</p>
+            </div>
+            
+            <div class="mt-8 relative z-10 text-xs text-amber-200">
+                <div class="flex items-center gap-2 mb-2"><i class="fas fa-check-circle"></i> Panel de Administración</div>
+                <div class="flex items-center gap-2"><i class="fas fa-shield-alt"></i> Seguridad Administrativa</div>
+            </div>
+        </div>
+        
+        <!-- Columna del Formulario -->
+        <div class="md:col-span-8 p-8 md:p-10">
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <h1 class="text-xl font-bold text-white">Formulario Técnico</h1>
+                    <p class="text-slate-400 text-xs mt-0.5">Gestión interna de registros</p>
+                </div>
+                <a href="{% url 'customadmin:cliente_list' %}" class="h-9 w-9 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white transition flex items-center justify-center border border-white/5" title="Regresar a la Lista">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
+            </div>
+
+            <!-- Django form error alerts -->
+            {% if form.errors %}
+                <div class="alert alert-danger bg-red-950/30 border-red-500/30 text-red-200 text-xs p-3 rounded-xl mb-4">
+                    <strong>Por favor corrige los siguientes errores:</strong>
+                    {{ form.errors }}
+                </div>
+            {% endif %}
+
+            <form method="POST" autocomplete="off" class="row g-3">
+                {% csrf_token %}
+
+                <!-- Nombre y Apellido -->
+                <div class="col-md-6">
+                    <label for="{{ form.nombre.id_for_label }}" class="form-label">Nombre</label>
+                    {{ form.nombre }}
+                </div>
+                <div class="col-md-6">
+                    <label for="{{ form.apellido.id_for_label }}" class="form-label">Apellido</label>
+                    {{ form.apellido }}
+                </div>
+
+                <!-- Correo y Teléfono -->
+                <div class="col-md-6">
+                    <label for="{{ form.correo.id_for_label }}" class="form-label">Correo Electrónico</label>
+                    {{ form.correo }}
+                </div>
+                <div class="col-md-6">
+                    <label for="{{ form.telefono.id_for_label }}" class="form-label">Teléfono</label>
+                    {{ form.telefono }}
+                </div>
+
+                <!-- Dirección Completa -->
+                <div class="col-12">
+                    <label for="{{ form.direccion.id_for_label }}" class="form-label">Dirección de Residencia</label>
+                    {{ form.direccion }}
+                </div>
+
+                <!-- Ciudad, Estado, Código Postal -->
+                <div class="col-md-5">
+                    <label for="{{ form.ciudad.id_for_label }}" class="form-label">Ciudad</label>
+                    {{ form.ciudad }}
+                </div>
+                <div class="col-md-4">
+                    <label for="{{ form.estado.id_for_label }}" class="form-label">Estado / Región</label>
+                    {{ form.estado }}
+                </div>
+                <div class="col-md-3">
+                    <label for="{{ form.codigo_postal.id_for_label }}" class="form-label">Código Postal</label>
+                    {{ form.codigo_postal }}
+                </div>
+
+                <!-- Botones de Acción -->
+                <div class="col-12 mt-5 flex gap-3">
+                    <button type="submit" class="bg-gradient-to-r from-amber-500 to-orange-600 hover:opacity-90 transition text-white px-6 py-3 rounded-xl font-bold flex-1 shadow-lg shadow-amber-500/25">
+                        <i class="fas fa-save mr-2"></i> Guardar Cliente
+                    </button>
+                    <a hx-get="{% url 'customadmin:cliente_list' %}" hx-target="#spa-container" hx-select="#spa-container" hx-push-url="true" class="bg-white/5 hover:bg-white/10 transition text-slate-300 hover:text-white px-6 py-3 rounded-xl font-bold border border-white/5 text-center flex items-center justify-center cursor-pointer">
+                        Cancelar
+                    </a>
+                </div>
+            </form>
+        </div>
+
+    </div>
 </div>
 {% endblock %}
