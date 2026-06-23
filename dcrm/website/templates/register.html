@@ -403,6 +403,8 @@
             id="username"
             name="username"
             placeholder="Nombre de usuario único"
+            pattern="^[\w-]{3,30}$"
+            title="Solo letras, números, guiones y guión bajo (3-30 caracteres)"
             required
             autofocus
           >
@@ -426,6 +428,8 @@
             id="password1"
             name="password1"
             placeholder="••••••••"
+            pattern="^[A-Za-z0-9@#$%^&+=]{6,}$"
+            title="Mínimo 6 caracteres, sin espacios"
             required
           >
         </div>
@@ -437,6 +441,8 @@
             id="password2"
             name="password2"
             placeholder="••••••••"
+            pattern="^[A-Za-z0-9@#$%^&+=]{6,}$"
+            title="Mínimo 6 caracteres, sin espacios"
             required
           >
         </div>

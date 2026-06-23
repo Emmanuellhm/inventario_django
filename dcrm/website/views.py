@@ -4,6 +4,9 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
+import re
+from roles.models import Role  # type: ignore
+from roles.decorators import role_required  # type: ignore
 
 # Usamos ReportLab para la generación de PDFs en Windows
 # Esto evita errores de dependencias con GTK+ (GObject) requeridos por WeasyPrint.
@@ -24,6 +27,7 @@ def home(request):
 
 
 @login_required(login_url='home')
+@role_required('Usuario', 'admin')
 def dashboard(request):
     """Dashboard principal: lista los clientes y muestra estadísticas con la nueva paleta."""
     clientes = Cliente.objects.all().order_by('-id')
@@ -50,6 +54,11 @@ def login_user(request):
 
     if not username or not password:
         messages.error(request, 'Por favor completa ambos campos.')
+        return redirect('home')
+
+    # Sanitización Regex Básica (Capa 3 y 4 de Seguridad)
+    if not re.match(r'^[\w-]{3,30}$', username):
+        messages.error(request, 'Credenciales incorrectas (formato de usuario no válido).')
         return redirect('home')
 
     user = authenticate(request, username=username, password=password)
@@ -94,6 +103,15 @@ def register_user(request):
             messages.error(request, 'La contraseña debe tener al menos 6 caracteres.')
             return redirect('register')
 
+        # Sanitización con Expresiones Regulares (Regex)
+        if not re.match(r'^[\w-]{3,30}$', username):
+            messages.error(request, 'El nombre de usuario solo puede tener letras, números, _ y -.')
+            return redirect('register')
+            
+        if not re.match(r'^[A-Za-z0-9@#$%^&+=]{6,}$', password1):
+            messages.error(request, 'La contraseña contiene caracteres especiales no permitidos.')
+            return redirect('register')
+
         if User.objects.filter(username=username).exists():
             messages.error(request, 'El nombre de usuario ya existe.')
             return redirect('register')
@@ -110,6 +128,11 @@ def register_user(request):
             first_name=first_name,
             last_name=last_name
         )
+        
+        # Asignar rol base automáticamente (Seguridad de Roles)
+        role, created = Role.objects.get_or_create(name='Usuario')
+        user.roles.add(role)
+
         messages.success(request, '¡Registro exitoso! Ahora inicia sesión con tus credenciales.')
         return redirect('home')
 
@@ -117,6 +140,7 @@ def register_user(request):
 
 
 @login_required(login_url='home')
+@role_required('Usuario', 'admin')
 def add_record(request):
     """Añade un nuevo cliente en base de datos."""
     if request.method == 'POST':
@@ -133,6 +157,7 @@ def add_record(request):
 
 
 @login_required(login_url='home')
+@role_required('Usuario', 'admin')
 def edit_record(request, pk):
     """Actualiza la información de un cliente existente."""
     cliente = get_object_or_404(Cliente, pk=pk)
@@ -150,6 +175,7 @@ def edit_record(request, pk):
 
 
 @login_required(login_url='home')
+@role_required('Usuario', 'admin')
 def delete_record(request, pk):
     """Elimina un cliente de la base de datos."""
     cliente = get_object_or_404(Cliente, pk=pk)
@@ -159,6 +185,7 @@ def delete_record(request, pk):
 
 
 @login_required(login_url='home')
+@role_required('Usuario', 'admin')
 def view_record(request, pk):
     """Ver la ficha completa de un cliente."""
     cliente = get_object_or_404(Cliente, pk=pk)
@@ -166,6 +193,7 @@ def view_record(request, pk):
 
 
 @login_required(login_url='home')
+@role_required('Usuario', 'admin')
 def descargar_pdf(request, pk):
     """Genera un archivo PDF con estilos premium de Bootstrap a partir de la ficha de cliente."""
     cliente = get_object_or_404(Cliente, pk=pk)

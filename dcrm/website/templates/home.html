@@ -397,6 +397,8 @@
             id="username"
             name="username"
             placeholder="Tu nombre de usuario"
+            pattern="^[\w-]{3,30}$"
+            title="Solo letras, números, guiones y guión bajo (3-30 caracteres)"
             required
             autofocus
           >
@@ -410,6 +412,8 @@
               id="password"
               name="password"
               placeholder="••••••••"
+              pattern="^[A-Za-z0-9@#$%^&+=]{6,}$"
+              title="Mínimo 6 caracteres, sin espacios"
               required
             >
             <button type="button" class="toggle-pw" onclick="togglePw()" aria-label="Mostrar contraseña">
