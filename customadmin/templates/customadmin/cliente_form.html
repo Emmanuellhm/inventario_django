@@ -72,11 +72,35 @@
                 </a>
             </div>
 
-            <!-- Django form error alerts -->
+            <!-- Errores de validación del formulario -->
             {% if form.errors %}
-                <div class="alert alert-danger bg-red-950/30 border-red-500/30 text-red-200 text-xs p-3 rounded-xl mb-4">
-                    <strong>Por favor corrige los siguientes errores:</strong>
-                    {{ form.errors }}
+                <div class="mb-4 rounded-xl border border-red-500/30 bg-red-950/30 overflow-hidden">
+                    <div class="flex items-center gap-2 px-4 py-3 bg-red-500/10 border-b border-red-500/20">
+                        <i class="fas fa-triangle-exclamation text-red-400"></i>
+                        <span class="text-red-200 font-semibold text-sm">Por favor corrige los siguientes errores:</span>
+                    </div>
+                    <ul class="divide-y divide-red-500/10">
+                        {% for field in form %}
+                            {% if field.errors %}
+                                {% for error in field.errors %}
+                                    <li class="flex items-start gap-3 px-4 py-2.5">
+                                        <i class="fas fa-xmark text-red-400 mt-0.5 flex-shrink-0 text-xs"></i>
+                                        <span class="text-red-300 text-xs leading-relaxed">
+                                            <span class="font-bold text-red-200">{{ field.label }}:</span> {{ error }}
+                                        </span>
+                                    </li>
+                                {% endfor %}
+                            {% endif %}
+                        {% endfor %}
+                        {% if form.non_field_errors %}
+                            {% for error in form.non_field_errors %}
+                                <li class="flex items-start gap-3 px-4 py-2.5">
+                                    <i class="fas fa-xmark text-red-400 mt-0.5 flex-shrink-0 text-xs"></i>
+                                    <span class="text-red-300 text-xs leading-relaxed">{{ error }}</span>
+                                </li>
+                            {% endfor %}
+                        {% endif %}
+                    </ul>
                 </div>
             {% endif %}
 

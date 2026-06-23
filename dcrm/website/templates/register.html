@@ -126,7 +126,11 @@
         display: flex;
         align-items: center;
         gap: 0.5rem;
+        position: relative;
+        overflow: hidden;
+        transition: opacity 0.4s ease, transform 0.4s ease;
       }
+      .alert.hiding { opacity: 0; transform: translateX(20px); }
       .alert-error {
         background: rgba(239,68,68,0.15);
         border: 1px solid rgba(239,68,68,0.3);
@@ -137,6 +141,29 @@
         border: 1px solid rgba(34,197,94,0.3);
         color: #86efac;
       }
+      .alert-close {
+        margin-left: auto;
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: rgba(255,255,255,0.3);
+        font-size: 1.1rem;
+        padding: 0;
+        transition: color 0.2s;
+        line-height: 1;
+      }
+      .alert-close:hover { color: rgba(255,255,255,0.75); }
+      .alert-bar {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        height: 2px;
+        width: 100%;
+      }
+      .alert-error .alert-bar { background: rgba(239,68,68,0.5); }
+      .alert-success .alert-bar { background: rgba(34,197,94,0.5); }
+      @keyframes shrinkBar { from { width: 100%; } to { width: 0%; } }
+      .alert-bar { animation: shrinkBar 5s linear forwards; }
 
       /* Form */
       .form-group {
@@ -365,7 +392,9 @@
         {% for message in messages %}
           <div class="alert {% if message.tags == 'error' %}alert-error{% else %}alert-success{% endif %}">
             {% if message.tags == 'error' %}⚠{% else %}✓{% endif %}
-            {{ message }}
+            <span>{{ message }}</span>
+            <button class="alert-close" onclick="closeAlert(this.closest('.alert'))" aria-label="Cerrar">&times;</button>
+            <div class="alert-bar"></div>
           </div>
         {% endfor %}
       {% endif %}
@@ -454,6 +483,19 @@
         ¿Ya tienes cuenta? <a href="{% url 'home' %}">Inicia sesión aquí</a>
       </div>
     </div>
+  <script>
+    function closeAlert(el) {
+      el.classList.add('hiding');
+      setTimeout(() => el.remove(), 400);
+    }
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('.alert').forEach(function (alert) {
+        setTimeout(function () { closeAlert(alert); }, 5000);
+      });
+    });
+  </script>
 
+  <!-- Custom Form Validation Script -->
+  <script src="{% static 'js/form-validation.js' %}"></script>
   </body>
 </html>

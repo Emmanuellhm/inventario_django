@@ -74,21 +74,56 @@
 
     <!-- Content Container -->
     <div class="container mx-auto px-6 mt-8 relative z-10" id="spa-container">
-        <!-- Messages -->
+        <!-- Toast Notifications -->
         {% if messages %}
-            <div class="max-w-6xl mx-auto mb-6">
+            <div id="toast-container" class="max-w-6xl mx-auto mb-6 space-y-3">
                 {% for message in messages %}
-                    <div class="p-4 rounded-xl flex items-center gap-3 border {% if message.tags == 'error' %}bg-red-950/30 border-red-500/30 text-red-200{% else %}bg-emerald-950/30 border-emerald-500/30 text-emerald-200{% endif %}">
-                        <i class="fas {% if message.tags == 'error' %}fa-exclamation-circle{% else %}fa-check-circle{% endif %}"></i>
-                        <span class="text-sm font-medium">{{ message }}</span>
+                    <div class="toast-alert relative flex items-start gap-3 px-4 py-3.5 rounded-xl border overflow-hidden
+                        {% if message.tags == 'error' %}bg-red-950/40 border-red-500/30 text-red-200
+                        {% elif message.tags == 'warning' %}bg-amber-950/40 border-amber-500/30 text-amber-200
+                        {% else %}bg-emerald-950/40 border-emerald-500/30 text-emerald-200{% endif %}">
+                        <!-- Icono -->
+                        <i class="fas flex-shrink-0 mt-0.5 text-base
+                            {% if message.tags == 'error' %}fa-circle-xmark text-red-400
+                            {% elif message.tags == 'warning' %}fa-triangle-exclamation text-amber-400
+                            {% else %}fa-circle-check text-emerald-400{% endif %}"></i>
+                        <!-- Texto -->
+                        <span class="text-sm font-medium flex-1">{{ message }}</span>
+                        <!-- Botón cerrar -->
+                        <button onclick="closeToast(this.closest('.toast-alert'))" class="text-white/30 hover:text-white/80 transition text-lg leading-none ml-2" aria-label="Cerrar">&times;</button>
+                        <!-- Barra de progreso -->
+                        <div class="toast-progress absolute bottom-0 left-0 h-0.5 w-full
+                            {% if message.tags == 'error' %}bg-red-500/60
+                            {% elif message.tags == 'warning' %}bg-amber-500/60
+                            {% else %}bg-emerald-500/60{% endif %}"></div>
                     </div>
                 {% endfor %}
             </div>
         {% endif %}
 
+        <style>
+            @keyframes shrink { from { width: 100%; } to { width: 0%; } }
+            .toast-progress { animation: shrink 5s linear forwards; }
+            .toast-alert { transition: opacity 0.4s ease, transform 0.4s ease; }
+            .toast-alert.hiding { opacity: 0; transform: translateX(20px); }
+        </style>
+        <script>
+            function closeToast(el) {
+                el.classList.add('hiding');
+                setTimeout(() => el.remove(), 400);
+            }
+            document.addEventListener('DOMContentLoaded', function () {
+                document.querySelectorAll('.toast-alert').forEach(function (toast) {
+                    setTimeout(function () { closeToast(toast); }, 5000);
+                });
+            });
+        </script>
+
         {% block content %}
         {% endblock %}
     </div>
 
+    <!-- Custom Form Validation Script -->
+    <script src="{% static 'js/form-validation.js' %}"></script>
 </body>
 </html>
