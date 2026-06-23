@@ -319,21 +319,8 @@ def register_user(request):
     return render(request, 'register.html')
 
 
-@login_required(login_url='home')
-@role_required('Usuario', 'admin')
-def add_record(request):
-    """Añade un nuevo cliente en base de datos."""
-    if request.method == 'POST':
-        form = ClienteForm(request.POST)
-        if form.is_valid():
-            form.save()
-            messages.success(request, '¡Cliente agregado exitosamente!')
-            return redirect('dashboard')
-        else:
-            messages.error(request, 'Hubo un error al guardar el cliente. Revisa el formulario.')
-    else:
-        form = ClienteForm()
-    return render(request, 'add_record.html', {'form': form})
+# Duplicate add_record removed to avoid conflict; HTMX-enabled add_record is defined earlier.
+
 
 
 @login_required(login_url='home')
