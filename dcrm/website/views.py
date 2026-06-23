@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
+from django.urls import reverse
 import re
 from roles.models import Role  # type: ignore
 from roles.decorators import role_required  # type: ignore
@@ -17,6 +18,11 @@ from reportlab.lib import colors
 
 from .models import Cliente
 from .forms import ClienteForm
+
+
+def is_htmx(request):
+    """Return True if the request is made via HTMX (header 'Hx-Request' present)."""
+    return request.headers.get('Hx-Request') == 'true'
 
 
 def home(request):
@@ -42,6 +48,180 @@ def dashboard(request):
         'estados_unicos': estados_unicos,
     }
     return render(request, 'dashboard.html', context)
+
+
+def login_user(request):
+    """Procesa el inicio de sesión del usuario."""
+    if request.method != 'POST':
+        return redirect('home')
+
+    username = request.POST.get('username', '').strip()
+    password = request.POST.get('password', '').strip()
+
+    if not username or not password:
+        messages.error(request, 'Por favor completa ambos campos.')
+        return redirect('home')
+
+    # Sanitización Regex Básica (Capa 3 y 4 de Seguridad)
+    if not re.match(r'^[\w-]{3,30}$', username):
+        messages.error(request, 'Credenciales incorrectas (formato de usuario no válido).')
+        return redirect('home')
+
+    user = authenticate(request, username=username, password=password)
+    if user is not None:
+        login(request, user)
+        return redirect('dashboard')
+
+    messages.error(request, 'Credenciales incorrectas. Verifica tu usuario y contraseña.')
+    return redirect('home')
+
+
+def logout_user(request):
+    """Cierra la sesión del usuario."""
+    logout(request)
+    messages.success(request, '¡Has cerrado sesión correctamente!')
+    return redirect('home')
+
+
+def register_user(request):
+    """Registra un nuevo usuario de administración."""
+    if request.user.is_authenticated:
+        return redirect('dashboard')
+    
+    if request.method == 'POST':
+        username = request.POST.get('username', '').strip()
+        email = request.POST.get('email', '').strip()
+        password1 = request.POST.get('password1', '').strip()
+        password2 = request.POST.get('password2', '').strip()
+        first_name = request.POST.get('first_name', '').strip()
+        last_name = request.POST.get('last_name', '').strip()
+
+        # Validaciones
+        if not all([username, email, password1, password2]):
+            messages.error(request, 'Por favor completa todos los campos obligatorios.')
+            return redirect('register')
+
+        if password1 != password2:
+            messages.error(request, 'Las contraseñas no coinciden.')
+            return redirect('register')
+
+        if len(password1) < 6:
+            messages.error(request, 'La contraseña debe tener al menos 6 caracteres.')
+            return redirect('register')
+
+        # Sanitización con Expresiones Regulares (Regex)
+        if not re.match(r'^[\w-]{3,30}$', username):
+            messages.error(request, 'El nombre de usuario solo puede tener letras, números, _ y -.')
+            return redirect('register')
+            
+        if not re.match(r'^[A-Za-z0-9@#$%^+=]{6,}$', password1):
+            messages.error(request, 'La contraseña contiene caracteres especiales no permitidos.')
+            return redirect('register')
+
+        if User.objects.filter(username=username).exists():
+            messages.error(request, 'El nombre de usuario ya existe.')
+            return redirect('register')
+
+        if User.objects.filter(email=email).exists():
+            messages.error(request, 'El email ya está registrado.')
+            return redirect('register')
+
+        # Crear usuario
+        user = User.objects.create_user(
+            username=username,
+            email=email,
+            password=password1,
+            first_name=first_name,
+            last_name=last_name
+        )
+        
+        # Asignar rol base automáticamente (Seguridad de Roles)
+        role, created = Role.objects.get_or_create(name='Usuario')
+        user.roles.add(role)
+
+        messages.success(request, '¡Registro exitoso! Ahora inicia sesión con tus credenciales.')
+        return redirect('home')
+
+    return render(request, 'register.html')
+
+
+@login_required(login_url='home')
+@role_required('Usuario', 'admin')
+def add_record(request):
+    """Añade un nuevo cliente en base de datos."""
+    if request.method == 'POST':
+        form = ClienteForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, '¡Cliente agregado exitosamente!')
+            if is_htmx(request):
+                # HTMX request: redirect via header
+                response = HttpResponse()
+                response['HX-Redirect'] = reverse('dashboard')
+                return response
+            return redirect('dashboard')
+        else:
+            messages.error(request, 'Hubo un error al guardar el cliente. Revisa el formulario.')
+    else:
+        form = ClienteForm()
+    # GET request
+    if is_htmx(request):
+        return render(request, 'add_record_partial.html', {'form': form})
+    return render(request, 'add_record.html', {'form': form})
+
+
+@login_required(login_url='home')
+@role_required('Usuario', 'admin')
+def edit_record(request, pk):
+    """Actualiza la información de un cliente existente."""
+    cliente = get_object_or_404(Cliente, pk=pk)
+    if request.method == 'POST':
+        form = ClienteForm(request.POST, instance=cliente)
+        if form.is_valid():
+            form.save()
+            messages.success(request, '¡Cliente actualizado exitosamente!')
+            if is_htmx(request):
+                response = HttpResponse()
+                response['HX-Redirect'] = reverse('dashboard')
+                return response
+            return redirect('dashboard')
+        else:
+            messages.error(request, 'Hubo un error al actualizar los datos. Revisa el formulario.')
+    else:
+        form = ClienteForm(instance=cliente)
+    if is_htmx(request):
+        return render(request, 'edit_record_partial.html', {'form': form, 'cliente': cliente})
+    return render(request, 'edit_record.html', {'form': form, 'cliente': cliente})
+
+
+@login_required(login_url='home')
+@role_required('Usuario', 'admin')
+def delete_record(request, pk):
+    """Elimina un cliente de la base de datos."""
+    cliente = get_object_or_404(Cliente, pk=pk)
+    cliente.delete()
+    messages.success(request, '¡El registro del cliente ha sido eliminado!')
+    if is_htmx(request):
+        response = HttpResponse()
+        response['HX-Redirect'] = reverse('dashboard')
+        return response
+    return redirect('dashboard')
+
+
+@login_required(login_url='home')
+@role_required('Usuario', 'admin')
+def view_record(request, pk):
+    """Ver la ficha completa de un cliente."""
+    cliente = get_object_or_404(Cliente, pk=pk)
+    if is_htmx(request):
+        return render(request, 'view_record_partial.html', {'cliente': cliente})
+    return render(request, 'view_record.html', {'cliente': cliente})
+
+
+
+
+
+
 
 
 def login_user(request):

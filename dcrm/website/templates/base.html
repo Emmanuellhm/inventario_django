@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Inventario LF - CRM</title>
     <script src="{% static 'js/tailwindcss.js' %}"></script>
+    <script src="{% static 'js/htmx.min.js' %}"></script>
     <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
     <link href="{% static 'css/all.min.css' %}" rel="stylesheet">
     <style>
@@ -51,7 +52,7 @@
   </head>
   <body>
     {% include 'navbar.html' %}
-    <div class="container py-5">
+    <div class="container py-5" id="spa-container">
         {% block content %}
         {% endblock %}
     </div>
